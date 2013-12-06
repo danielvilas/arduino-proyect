@@ -56,5 +56,15 @@ void loop() {
     reg.shift(a);
     delay(250);
   }
-  delay(2-50);
+  a[0]=0;
+  a[1]=0x80;
+  for(int i=0;i<16;i++){
+    reg.shift(a);
+    a[0]=a[0]>>1;
+    a[1]=a[1]>>1;
+    if(i==7)a[0]=0x80;
+
+    delay(250);
+  }
+  delay(250);
 }
