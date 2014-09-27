@@ -12,10 +12,10 @@
 
 Chal74hc595 reg = Chal74hc595(2,1);
 
-int sh_cp=8;
-int st_cp=9;
-int ds1 =10;
-int ds2=11;
+int sh_cp=11; //SCK
+int st_cp=8;//RCK
+int ds1 =9;
+int ds2=10;
 int ds[]={ds1,ds2};
 
 void setup() {

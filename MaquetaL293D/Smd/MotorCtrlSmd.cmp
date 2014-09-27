@@ -1,0 +1,122 @@
+Cmp-Mod V01 Created by Cvpcb (2014-09-14 BZR 5135)-product   date = 16/09/2014 16:23:56
+
+BeginCmp
+TimeStamp = /541750DD;
+Reference = D1;
+ValeurCmp = LED;
+IdModule  = LEDs:LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /54175792;
+Reference = D2;
+ValeurCmp = LED;
+IdModule  = LEDs:LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /541750A5;
+Reference = D3;
+ValeurCmp = LED;
+IdModule  = LEDs:LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /5417578C;
+Reference = D4;
+ValeurCmp = LED;
+IdModule  = LEDs:LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /54183BAE;
+Reference = D5;
+ValeurCmp = LED;
+IdModule  = LEDs:LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /54183D15;
+Reference = D6;
+ValeurCmp = LED;
+IdModule  = LEDs:LED-1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /54174758;
+Reference = IC1;
+ValeurCmp = L293D;
+IdModule  = SMD_Packages:SO-16-L;
+EndCmp
+
+BeginCmp
+TimeStamp = /54174A22;
+Reference = P1;
+ValeurCmp = CONN_01X02;
+IdModule  = Connectors.Trhu:1x2-SCREW-TERM_P200mil;
+EndCmp
+
+BeginCmp
+TimeStamp = /54174AE8;
+Reference = P2;
+ValeurCmp = CONN_01X02;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x02;
+EndCmp
+
+BeginCmp
+TimeStamp = /54174A8B;
+Reference = P3;
+ValeurCmp = CONN_01X04;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x04;
+EndCmp
+
+BeginCmp
+TimeStamp = /54174AB7;
+Reference = P4;
+ValeurCmp = CONN_01X04;
+IdModule  = Pin_Headers:Pin_Header_Straight_1x04;
+EndCmp
+
+BeginCmp
+TimeStamp = /54174A5D;
+Reference = P5;
+ValeurCmp = CONN_01X02;
+IdModule  = Connectors.Trhu:1x2-SCREW-TERM_P200mil;
+EndCmp
+
+BeginCmp
+TimeStamp = /54174B0F;
+Reference = P6;
+ValeurCmp = CONN_01X02;
+IdModule  = Connectors.Trhu:1x2-SCREW-TERM_P200mil;
+EndCmp
+
+BeginCmp
+TimeStamp = /5417510E;
+Reference = R1;
+ValeurCmp = R;
+IdModule  = Resistors_SMD:R_1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /54175798;
+Reference = R2;
+ValeurCmp = R;
+IdModule  = Resistors_SMD:R_1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /54183C36;
+Reference = R3;
+ValeurCmp = R;
+IdModule  = Resistors_SMD:R_1206;
+EndCmp
+
+BeginCmp
+TimeStamp = /54183D1B;
+Reference = R4;
+ValeurCmp = R;
+IdModule  = Resistors_SMD:R_1206;
+EndCmp
+
+EndListe
