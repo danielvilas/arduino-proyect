@@ -14,10 +14,10 @@ void setup(){
 void loop(){
     digitalWrite(c4a, HIGH);
     digitalWrite(c3a, LOW);
-    analogWrite(c34e,127);
+    analogWrite(c34e,255);
     delay(500);
-    //digitalWrite(c3a, HIGH);
-    //digitalWrite(c4a, LOW);
-    analogWrite(c34e,200);
+    digitalWrite(c3a, HIGH);
+    digitalWrite(c4a, LOW);
+    analogWrite(c34e,255);
     delay(500);
 }
