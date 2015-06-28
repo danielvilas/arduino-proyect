@@ -1,6 +1,8 @@
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
 #include <SoftwareSerial.h>
+#include <chall293.h>
+
 
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address
 
@@ -8,6 +10,8 @@ SoftwareSerial Serial1=SoftwareSerial(10,11);
 
 int HA1=3,HB1=4,HEN1=5;
 int HA2=7,HB2=8,HEN2=9;
+ChalL293 l293(HA1,HB1,HEN1,  HA2,HB2,HEN2);
+
 
 int ERR=2,VF=A0;
 int RESET=6;
@@ -16,7 +20,7 @@ void setup(){
   Serial.begin(9600);
   Serial1.begin(9600);  // Used to type in characters
 
-  lcd.begin(20,4);
+  lcd.begin(20,4);  
   lcd.clear();
     for(int i = 0; i< 3; i++)
   {
@@ -56,13 +60,13 @@ void autoReset(boolean isError);
 
 int cnt=0;
 void loop(){
-    updateCh2(HIGH,LOW,255);
-    updateCh1(HIGH,LOW,255);
+    updateCh2(l293_forward,255);
+    updateCh1(l293_forward,255);
     readCurrent();
     delay(500);
   
-    updateCh2(LOW,HIGH,200);
-    updateCh1(LOW,HIGH,200);
+    updateCh2(l293_backward,200);
+    updateCh1(l293_backward,200);
     readCurrent();
     delay(500);
     
@@ -107,14 +111,12 @@ void showStatus(boolean isError){
     }
 }
 
-void updateCh2(boolean a, boolean b, byte en){
-    digitalWrite(HA2, a);
-    digitalWrite(HB2, b);
-    analogWrite(HEN2,en);
+void updateCh2(L293_MODE mode, byte en){
+    l293.setModeCh2(mode);
+    l293.setSpeedCh1(en);
 }
 
-void updateCh1(boolean a, boolean b, byte en){
-    digitalWrite(HA1, a);
-    digitalWrite(HB1, b);
-    analogWrite(HEN1,en);
+void updateCh1(L293_MODE mode, byte en){
+    l293.setModeCh1(mode);
+    l293.setSpeedCh1(en);
 }
