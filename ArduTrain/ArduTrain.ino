@@ -60,19 +60,32 @@ void autoReset(boolean isError);
 
 int cnt=0;
 void loop(){
-    updateCh2(l293_forward,255);
-    updateCh1(l293_forward,255);
-    readCurrent();
-    delay(500);
+    //updateCh2(l293_forward,255);
+    //updateCh1(l293_forward,255);
+    //readCurrent();
+    //delay(500);
   
-    updateCh2(l293_backward,200);
-    updateCh1(l293_backward,200);
-    readCurrent();
-    delay(500);
+    //updateCh2(l293_backward,200);
+    //updateCh1(l293_backward,200);
+   // readCurrent();
+    //delay(500);
     
     boolean isError = digitalRead(ERR);
     autoReset(isError);
     showStatus(isError);
+    
+    lcd.setCursor(0,3);
+    while(Serial.available()){
+      char c = Serial.read();
+      Serial1.write(c);
+      //lcd.write(c);
+    }
+    lcd.setCursor(0,3);
+   while(Serial1.available()){
+      char c = Serial1.read();
+      Serial.write(c);
+      lcd.write(c);
+    }
 }
 
 void readCurrent(){
@@ -113,7 +126,7 @@ void showStatus(boolean isError){
 
 void updateCh2(L293_MODE mode, byte en){
     l293.setModeCh2(mode);
-    l293.setSpeedCh1(en);
+    l293.setSpeedCh2(en);
 }
 
 void updateCh1(L293_MODE mode, byte en){
