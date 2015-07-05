@@ -2,6 +2,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <SoftwareSerial.h>
 #include <chall293.h>
+#include "ArduTrain.h"
 
 
 LiquidCrystal_I2C lcd(0x27, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);  // Set the LCD I2C address
@@ -67,7 +68,7 @@ void loop(){
   
     //updateCh2(l293_backward,200);
     //updateCh1(l293_backward,200);
-   // readCurrent();
+    readCurrent();
     //delay(500);
     
     boolean isError = digitalRead(ERR);
@@ -75,24 +76,56 @@ void loop(){
     showStatus(isError);
     
     lcd.setCursor(0,3);
-    while(Serial.available()){
-      char c = Serial.read();
-      Serial1.write(c);
-      //lcd.write(c);
+    if(Serial.available()){
+      while(Serial.available()){
+        char c = Serial.read();
+        Serial1.write(c);
+        //lcd.write(c);
+      }
+      delay(100);
+      lcd.setCursor(0,3);
+     while(Serial1.available()){
+        char c = Serial1.read();
+        Serial.write(c);
+        //lcd.write(c);
+      }
     }
-    lcd.setCursor(0,3);
-   while(Serial1.available()){
-      char c = Serial1.read();
-      Serial.write(c);
-      lcd.write(c);
-    }
+    
+    readCommand();
 }
 
+void readCommand(){
+  char cmd[25];
+  if(Serial1.available()){
+    if(Serial1.available()<25){
+      Serial.print("Available: ");
+      Serial.println(Serial1.available());
+    }else{
+      Serial.print("Available: ");
+      Serial.println(Serial1.available());
+      int r = Serial1.readBytes(&cmd[0],25);
+      Serial.print("Read: ");
+      Serial.println(r);
+      Serial.println(cmd);
+    }
+  }
+}
+
+long lastRead=0;
 void readCurrent(){
-    byte valVf=analogRead(VF);
-    lcd.setCursor(0,1);
-    lcd.print("Read: ");
-    lcd.print(valVf);
+    long currentMillis= millis();
+    if(currentMillis - lastRead>=500){
+      //Serial.print("reading from ");
+      //Serial.print(currentMillis);
+      //Serial.print(" - ");
+      //Serial.println(lastRead);      
+      byte valVf=analogRead(VF);
+      lcd.setCursor(0,1);
+      lcd.print("Read: ");
+      lcd.print(valVf);
+      lcd.print("   ");
+      lastRead=currentMillis;
+    }
 }
 
 void autoReset(boolean isError){
