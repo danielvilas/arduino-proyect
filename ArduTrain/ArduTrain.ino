@@ -94,22 +94,54 @@ void loop(){
     readCommand();
 }
 
+char cmd[25];
+int lReadCmd=0;
+long lastCmdMilis=0;
+
 void readCommand(){
   char cmd[25];
   if(Serial1.available()){
-    if(Serial1.available()<25){
-      Serial.print("Available: ");
-      Serial.println(Serial1.available());
-    }else{
-      Serial.print("Available: ");
-      Serial.println(Serial1.available());
-      int r = Serial1.readBytes(&cmd[0],25);
-      Serial.print("Read: ");
-      Serial.println(r);
-      Serial.println(cmd);
+     int r= Serial1.readBytes(&cmd[lReadCmd],25-lReadCmd);
+     lReadCmd+=r;
+     if(lReadCmd==25){
+       Serial.println("Command Recibed");
+       lReadCmd=0;
+       ArduTrainStatus st = checkCmd(cmd);
+       Serial.print("Status");
+       Serial.println(st);
+     }else{
+       Serial.println("Partial Command");
+     }
+     lastCmdMilis=millis();
+  }else if(lReadCmd!=0){
+     long currentMillis= millis();
+    if(currentMillis - lastCmdMilis>=1000){
+      Serial.println("TO waiting Command");
+      lReadCmd=0;
     }
   }
 }
+
+ArduTrainStatus checkCmd(char* cmd){
+  byte len = (byte) cmd[0];
+  //Serial.println("Check cmd len: ");
+  //Serial.println(len);
+  byte crc= (byte) cmd[len+2];
+  //Serial.println("Check cmd Crc: ");
+  //Serial.println(crc);
+  byte calc=len;
+  for (int i=1;i<len+2;i++){
+    calc ^= (byte) cmd[i];
+  }
+  //Serial.println("Check cmd Crc: ");
+  //Serial.println(calc);
+  if(calc!=crc)return atst_Crc;
+    for (int i=len+3;i<25;i++){
+    if((byte) cmd[i] != len)return atst_Pad;
+  }
+  return atst_NoError;
+}
+
 
 long lastRead=0;
 void readCurrent(){
