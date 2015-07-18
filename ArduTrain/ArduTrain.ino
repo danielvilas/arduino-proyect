@@ -61,19 +61,19 @@ void autoReset(boolean isError);
 
 int cnt=0;
 void loop(){
-    //updateCh2(l293_forward,255);
-    //updateCh1(l293_forward,255);
-    //readCurrent();
-    //delay(500);
-  
-    //updateCh2(l293_backward,200);
-    //updateCh1(l293_backward,200);
+    /*updateCh2(l293_forward,255);
+    updateCh1(l293_forward,255);
     readCurrent();
-    //delay(500);
+    delay(500);
+  
+    updateCh2(l293_backward,200);
+    updateCh1(l293_backward,200);
     
-    boolean isError = digitalRead(ERR);
-    autoReset(isError);
-    showStatus(isError);
+    delay(500);
+    */
+    
+    readCurrent();
+    autoResetCtrl();
     
     lcd.setCursor(0,3);
     if(Serial.available()){
@@ -92,23 +92,33 @@ void loop(){
     }
     
     readCommand();
+    processCommand();
 }
 
-char cmd[25];
+byte cmd[25];
 int lReadCmd=0;
 long lastCmdMilis=0;
+byte* cmdPtr=0;
 
 void readCommand(){
-  char cmd[25];
+  if(cmdPtr!=0)return;
+  //byte cmd[25];
   if(Serial1.available()){
-     int r= Serial1.readBytes(&cmd[lReadCmd],25-lReadCmd);
+     int r= Serial1.readBytes((char*)&cmd[lReadCmd],25-lReadCmd);
      lReadCmd+=r;
      if(lReadCmd==25){
        Serial.println("Command Recibed");
        lReadCmd=0;
        ArduTrainStatus st = checkCmd(cmd);
-       Serial.print("Status");
+       Serial.print("Status ");
        Serial.println(st);
+       switch(st){
+         case atst_NoError:
+           cmdPtr=(byte*)malloc(25);
+           memcpy(cmdPtr,cmd,25);
+           break;
+         default:;
+       }
      }else{
        Serial.println("Partial Command");
      }
@@ -122,7 +132,16 @@ void readCommand(){
   }
 }
 
-ArduTrainStatus checkCmd(char* cmd){
+void processCommand(){
+      if(cmdPtr!=0){
+        Serial.println("ProcessCommand");
+        Serial.println((char*)cmdPtr);
+        free((void*)cmdPtr);
+        cmdPtr=0;
+    }
+}
+
+ArduTrainStatus checkCmd(byte* cmd){
   byte len = (byte) cmd[0];
   //Serial.println("Check cmd len: ");
   //Serial.println(len);
@@ -147,16 +166,28 @@ long lastRead=0;
 void readCurrent(){
     long currentMillis= millis();
     if(currentMillis - lastRead>=500){
-      //Serial.print("reading from ");
-      //Serial.print(currentMillis);
-      //Serial.print(" - ");
-      //Serial.println(lastRead);      
+      /*Serial.print("reading from ");
+      Serial.print(currentMillis);
+      Serial.print(" - ");
+      Serial.println(lastRead);*/      
       byte valVf=analogRead(VF);
       lcd.setCursor(0,1);
       lcd.print("Read: ");
       lcd.print(valVf);
       lcd.print("   ");
       lastRead=currentMillis;
+    }
+}
+
+long lastAutoReset=0;
+void autoResetCtrl(){
+    long currentMillis= millis();
+    if(currentMillis - lastAutoReset>=1000){
+ 
+      boolean isError = digitalRead(ERR);
+      autoReset(isError);
+      showStatus(isError);
+      lastAutoReset=currentMillis;
     }
 }
 
