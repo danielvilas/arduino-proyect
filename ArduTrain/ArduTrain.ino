@@ -59,20 +59,29 @@ void setup(){
 
 void autoReset(boolean isError);
 
+boolean tmp=false;
+long lastChange=0;
+void changeOut(){
+    long currentMillis= millis();
+    if(currentMillis - lastChange>=2000){
+      if(tmp){
+         updateCh2(l293_forward,255);
+         updateCh1(l293_forward,255);
+      }else{
+         updateCh2(l293_backward,127);
+         updateCh1(l293_backward,127);
+      }
+      tmp=!tmp;
+      lastChange=currentMillis;
+    }
+}
+
+
 int cnt=0;
 void loop(){
-    /*updateCh2(l293_forward,255);
-    updateCh1(l293_forward,255);
-    readCurrent();
-    delay(500);
   
-    updateCh2(l293_backward,200);
-    updateCh1(l293_backward,200);
-    
-    delay(500);
-    */
-    
-    readCurrent();
+    //changeOut();
+     readCurrent();
     autoResetCtrl();
     
     lcd.setCursor(0,3);
@@ -135,11 +144,50 @@ void readCommand(){
 void processCommand(){
       if(cmdPtr!=0){
         Serial.println("ProcessCommand");
-        Serial.println((char*)cmdPtr);
+        ArduTrainCommands cmd = (ArduTrainCommands) cmdPtr[1];
+        switch(cmd){
+          case atcmd_Connect: break;
+          case atcmd_Disconnect: break;
+          case atcmd_Echo: 
+            cmdEcho(cmdPtr[0],(char*)&cmdPtr[2]); 
+            break;
+          case atcdm_SetChannel:
+            cmdSetChannel((long*)&cmdPtr[2],cmdPtr[6], (tL293_MODE)cmdPtr[7],cmdPtr[8] );
+            break;
+          default: break;
+        }
         free((void*)cmdPtr);
         cmdPtr=0;
     }
 }
+
+void cmdEcho(byte len, char* msg){
+  char* str = (char*) malloc(len+1);
+  memcpy(str,msg,len);
+  str[len]=0;//forzamos el fin de linea
+  Serial.println("Echo cmd:");
+  Serial.println(str);
+  free(str);
+}
+
+void cmdSetChannel(long* idSesion, byte ch, tL293_MODE mode, byte val){
+    Serial.print("Set Channel (");
+    Serial.print (ch);
+    Serial.print (") at ");
+    Serial.print (val);
+    Serial.print (" mode(");
+    Serial.print(mode);
+    Serial.println(")");
+    if(ch==1){
+      l293.setModeCh1(mode);
+      l293.setSpeedCh1(val);
+    }else{
+      l293.setModeCh2(mode);
+      l293.setSpeedCh2(val);
+    }
+
+}
+
 
 ArduTrainStatus checkCmd(byte* cmd){
   byte len = (byte) cmd[0];
@@ -166,7 +214,7 @@ long lastRead=0;
 void readCurrent(){
     long currentMillis= millis();
     if(currentMillis - lastRead>=500){
-      /*Serial.print("reading from ");
+     /* Serial.print("reading from ");
       Serial.print(currentMillis);
       Serial.print(" - ");
       Serial.println(lastRead);*/      
