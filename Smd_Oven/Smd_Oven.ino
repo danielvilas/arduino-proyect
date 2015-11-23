@@ -10,18 +10,20 @@
   Gilchrist 6/2/2014 1.0
 */
 
-#define sclk 13  // Don't change
+#define P_sclk 13  // Don't change
 #define mosi 11  // Don't change
-#define cs   9
+#define TFT_cs   9
 #define dc   8
 #define rst  7  // you can also connect this to the Arduino reset
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <Adafruit_ST7735.h> // Hardware-specific library
 #include <SPI.h>
 #include <SD.h>
+#include <Thermocouple.h>
 
-Adafruit_ST7735 tft = Adafruit_ST7735(cs, dc, rst);       // Invoke custom library
+Adafruit_ST7735 tft = Adafruit_ST7735(TFT_cs, dc, rst);       // Invoke custom library
 
+Thermocouple tc1 = Thermocouple(3); 
 // High when a value is ready to be read
 volatile bool readFlag;
 
@@ -43,13 +45,13 @@ void setup_timer2() {
 }
 
 void setup(void) {
-  //Serial.begin(9600);
-  //Serial.print("Initializing SD card...");
+  Serial.begin(9600);
+  Serial.print("Initializing SD card...");
   if (!SD.begin(4)) {
-    //Serial.println("failed!");
+    Serial.println("failed!");
     //return;
   }
-  //Serial.println("OK!");
+  Serial.println("OK!");
   tft.initR(INITR_BLACKTAB); 
   tft.setRotation(1);
   tft.fillScreen(ST7735_BLACK);
@@ -122,6 +124,10 @@ void loop() {
     tft.print(temperatureMean);
     temperatureMean=0;
     temperatureCount=0;
+    tft.setCursor(2+12*7+2,2);
+    float max66775 = tc1.readC();
+    tft.print(max66775);
+    
   } 
   readFlag=0;
  }
